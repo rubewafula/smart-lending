@@ -14,7 +14,7 @@ pub struct LoginResponse {
     pub credit_balance: f64
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Clone, Deserialize)]
 pub struct Claims {
     pub sub: String,
     pub exp: usize
