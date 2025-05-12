@@ -15,9 +15,7 @@ pub mod services;
 pub mod repositories;
 pub mod db;
 pub mod utils;
-
-
-
+pub mod middleware;
 
 
 #[tokio::main]
