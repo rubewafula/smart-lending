@@ -1,0 +1,18 @@
+2025-05-09T16:03:17.830941Z  INFO 🚀 Starting server at http://127.0.0.1:3000
+2025-05-09T16:03:22.125612Z DEBUG summary="SELECT * FROM authtoken_token …" db.statement="\n\nSELECT * FROM authtoken_token WHERE token = ?\n" rows_affected=0 rows_returned=1 elapsed=4.821803ms elapsed_secs=0.004821803
+2025-05-09T16:03:22.125878Z  INFO Found results from query auth token query
+2025-05-09T16:03:22.170742Z DEBUG summary="SET sql_mode=(SELECT CONCAT(@@sql_mode, ',PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION')),time_zone='+00:00',NAMES …" db.statement="\n\nSET sql_mode=(SELECT CONCAT(@@sql_mode, ',PIPES_AS_CONCAT,NO_ENGINE_SUBSTITUTION')),time_zone='+00:00',NAMES utf8mb4 COLLATE utf8mb4_unicode_ci;\n" rows_affected=0 rows_returned=0 elapsed=1.224761ms elapsed_secs=0.001224761
+2025-05-09T16:03:22.173246Z DEBUG summary="SELECT * FROM `auth_user` …" db.statement="\n\nSELECT * FROM `auth_user` WHERE id = ?\n" rows_affected=0 rows_returned=1 elapsed=2.22275ms elapsed_secs=0.00222275
+2025-05-09T16:03:22.173452Z  INFO Found results from query
+2025-05-09T16:03:22.185151Z DEBUG summary="UPDATE `auth_user` SET `date_joined` …" db.statement="\n\nUPDATE `auth_user` SET `date_joined` = ?, `email` = ?, `first_name` = ?, `id` = ?, `is_active` = ?, `is_staff` = ?, `is_superuser` = ?, `last_login` = ?, `last_name` = ?, `password` = ?, `username` = ? WHERE id = ?\n" rows_affected=1 rows_returned=0 elapsed=11.111994ms elapsed_secs=0.011111994
+2025-05-09T16:03:22.185404Z  INFO User account activated successfully, 1
+2025-05-09T16:06:52.173187Z DEBUG summary="SELECT * FROM authtoken_token …" db.statement="\n\nSELECT * FROM authtoken_token WHERE token = ?\n" rows_affected=0 rows_returned=1 elapsed=9.086736ms elapsed_secs=0.009086736
+2025-05-09T16:06:52.173421Z  INFO Found results from query auth token query
+2025-05-09T16:06:52.175272Z DEBUG summary="SELECT * FROM `auth_user` …" db.statement="\n\nSELECT * FROM `auth_user` WHERE id = ?\n" rows_affected=0 rows_returned=1 elapsed=1.300851ms elapsed_secs=0.001300851
+2025-05-09T16:06:52.175526Z  INFO Found results from query
+2025-05-09T16:06:52.175593Z ERROR User already activated
+2025-05-09T16:06:54.389940Z DEBUG summary="SELECT * FROM authtoken_token …" db.statement="\n\nSELECT * FROM authtoken_token WHERE token = ?\n" rows_affected=0 rows_returned=1 elapsed=4.31952ms elapsed_secs=0.00431952
+2025-05-09T16:06:54.390254Z  INFO Found results from query auth token query
+2025-05-09T16:06:54.391570Z DEBUG summary="SELECT * FROM `auth_user` …" db.statement="\n\nSELECT * FROM `auth_user` WHERE id = ?\n" rows_affected=0 rows_returned=1 elapsed=629.185µs elapsed_secs=0.000629185
+2025-05-09T16:06:54.391826Z  INFO Found results from query
+2025-05-09T16:06:54.391921Z ERROR User already activated

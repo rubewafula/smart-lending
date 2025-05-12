@@ -1,0 +1,57 @@
+[package]
+name = "pesa-lending-app"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+# Axum framework & async runtime
+axum = { version = "0.7", features = ["macros"] }
+tokio = { version = "1", features = ["full"] }
+
+# JSON (de)serialization
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+
+# Database (Mysql) via SQLx
+sqlx = { version = "0.8", features = ["runtime-tokio", "runtime-tokio-native-tls", "mysql", "uuid", "chrono", "macros"] }
+
+# Authentication & Security
+argon2 = "0.5"                    # For password hashing
+jsonwebtoken = "9.2"             # JWT token handling
+uuid = { version = "1", features = ["v4"] }  # For UUIDs
+validator = { version = "0.17", features = ["derive"] }  # Request body validation
+
+tower = { version = "0.4", features = ["util", "timeout"] }
+tower-http = { version = "0.5", features = ["add-extension", "trace"] }
+
+# Date and time
+chrono = { version = "0.4", features = ["serde"] }
+
+# Logging & Tracing
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["fmt", "env-filter", "time"] }
+
+# Environment variable loading
+dotenvy = "0.15"
+
+# Optional for HTTPS (TLS)
+rustls = "0.23"
+tokio-rustls = "0.25"
+
+anyhow = "1.0"
+
+
+bcrypt = "0.15"
+#sea query Query builder
+sea-query = { version = "0.30", features = ["backend-mysql"] }
+
+#async trait
+async-trait = "0.1"
+#regex
+regex = "1"
+#Email agent
+lettre = { version = "0.11", features = ["tokio1-native-tls", "builder", "smtp-transport", "hostname"] }
+
+
+rand = "0.8"
+hex = "0.4"
