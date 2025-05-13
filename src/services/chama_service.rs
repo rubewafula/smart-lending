@@ -2,7 +2,8 @@ use chrono::{Duration, NaiveDateTime, Utc};
 use sqlx::MySqlPool;
 use tracing::{info, error};
 use crate::models::chama;
-use crate::dtos::chama::ChamaDto;
+use crate::models::auth;
+use crate::dtos::chama::{ChamaDto, ChamaMemberDto};
 use crate::repositories::crud_repository_trait::CrudRepositoryTrait;
 use crate::repositories::data_repository;
 
@@ -91,12 +92,66 @@ pub async fn update_chama(pool:&MySqlPool, user_id:&str, payload:&ChamaDto) -> i
 
 }
 
-pub async fn add_member(pool:&MySqlPool, user_id:&str, payload:&ChamaDto) -> i64{
-    let chama_member_repository = data_repository::DataRepository::<chama::Chama> {
+pub async fn add_member(pool:&MySqlPool, user_id:&str, payload:&ChamaMemberDto) -> i64{
+    let chama_member_repository = data_repository::DataRepository::<chama::ChamaMember> {
+        pool,
+        table_name: "chama_member",
+        pk_column: "id",
+        phantom: std::marker::PhantomData,
+    };
+
+    let chama_repository = data_repository::DataRepository::<chama::Chama> {
         pool,
         table_name: "chama",
         pk_column: "id",
         phantom: std::marker::PhantomData,
     };
+
+
+    let user_repository = data_repository::DataRepository::<auth::AuthUser> {
+        pool,
+        table_name: "auth_user",
+        pk_column: "id",
+        phantom: std::marker::PhantomData,
+    };
+
+    let result:i64 = match chama_repository.record_exists(&"id", &payload.chama_id.to_string()).await {
+        Ok(exists) => { if exists { 1 } else { -1 } },
+        Err(_) => 0,
+    };
+
+    if result == -1 || result == 0{
+        error!("Failed to create new chama: {:?}", result);
+        return result;
+    }
+
+    let result:i64 = match user_repository.record_exists(&"id", &payload.user_id.to_string()).await {
+        Ok(exists) => { if exists { 1 } else { -1 } },
+        Err(_) => 0,
+    };
+
+    if result == -1 || result == 0{
+        error!("Failed to create new chama: {:?}", result);
+        return result;
+    }
+
+    let now_eat: NaiveDateTime = (Utc::now() + Duration::hours(3)).naive_utc();
+    let chama_member =  chama::ChamaMember {
+        id:None,                 
+        user_id:payload.user_id.clone(),           
+        chama_id:payload.chama_id.clone(),
+        position:payload.position.clone(),
+        contribution_amount:payload.contribution_amount.clone(),           
+        created_at: now_eat,
+        updated_at:now_eat  
+    };
+    let result = chama_member_repository.insert(&chama_member).await;
+    if result.is_err() {
+        error!("Failed to create new chama: {:?}", result);
+        return 0;
+    }
+
+    result.unwrap()
+
 
 }
