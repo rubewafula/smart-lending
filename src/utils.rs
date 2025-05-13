@@ -1,4 +1,5 @@
 use axum::{http::StatusCode, response::IntoResponse};
+use chrono::{Duration, NaiveDateTime, Utc};
 use serde::Serialize;
 use regex::Regex;
 
@@ -63,6 +64,16 @@ pub fn is_valid_email(email: &str) -> bool {
 
 pub fn generate_token_128() -> String {
     let mut bytes = [0u8; 16]; // 128 bits = 16 bytes
+    OsRng.fill_bytes(&mut bytes); // Uses secure randomness
+    hex::encode(bytes) // Convert to a 32-char hex string
+}
+
+pub fn now_eat() -> NaiveDateTime {
+     (Utc::now() + Duration::hours(3)).naive_utc()
+}
+
+pub fn generate_invite_hash_64() -> String {
+    let mut bytes = [0u8; 8]; // 64 bits = 8 bytes
     OsRng.fill_bytes(&mut bytes); // Uses secure randomness
     hex::encode(bytes) // Convert to a 32-char hex string
 }

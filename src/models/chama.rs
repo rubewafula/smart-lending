@@ -36,7 +36,9 @@ pub struct ChamaMember {
     pub position:i64,      
     pub contribution_amount:f64,
     pub created_at: NaiveDateTime,
-    pub updated_at:NaiveDateTime      
+    pub updated_at:NaiveDateTime,
+    pub created_by:i64,
+    pub is_active:i8,  
 
 }
 
@@ -94,6 +96,20 @@ pub struct ChamaLoadQuaranteeSetting {
     pub chama_id:i64,           
     pub centage_required:f64, 
     pub max_repayment_months:i32,          
+    pub created_at: NaiveDateTime,
+    pub updated_at:NaiveDateTime      
+
+}
+
+
+#[derive(Serialize, Deserialize)]
+#[derive(Debug, FromRow)]
+pub struct ChamaInvite {
+    pub id:Option<i64>,                 
+    pub chama_id:i64,  
+    pub expiry_date:NaiveDateTime,
+    pub invite_hash:String,    
+    pub invited_by:i64,     
     pub created_at: NaiveDateTime,
     pub updated_at:NaiveDateTime      
 

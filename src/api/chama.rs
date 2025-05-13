@@ -1,6 +1,6 @@
 
 
-use axum::routing::post;
+use axum::routing::{post,get};
 use sqlx::MySqlPool;
 use axum::debug_handler;
 use tracing::info;
@@ -81,7 +81,7 @@ pub async fn update_chama(
 pub async fn add_member(
     Extension(claims): Extension<Claims>, 
     Extension(pool): Extension<MySqlPool>, 
-    Json(mut payload): Json<ChamaMemberDto>) -> impl IntoResponse {
+    Json(payload): Json<ChamaMemberDto>) -> impl IntoResponse {
 
         let user_id = claims.sub;
 
@@ -96,10 +96,29 @@ pub async fn add_member(
         }
 }
 
+pub async fn get_invite(
+    Extension(claims): Extension<Claims>, 
+    Extension(pool): Extension<MySqlPool>, Path(chama_id): Path<i64>, ) -> impl IntoResponse {
+
+        let user_id = claims.sub;
+
+        let invite_url = chama_service::get_invite(&pool, &user_id, &chama_id).await;
+         
+        if invite_url == "-1".to_string()  {
+            return ApiResponse::<String>::error(&format!("Chama with such name exists"), StatusCode::IM_USED.as_u16())
+        } else if invite_url  != "0".to_string() { 
+            return ApiResponse::<String>::success(Some(String::from(invite_url)))
+        } else {
+            return ApiResponse::<String>::error(&format!("Could not created user"), StatusCode::EXPECTATION_FAILED.as_u16())
+        }
+}
+
+
 pub fn routes() -> Router {
     Router::new()
         .route("/chama/create", post(create_new_chama))
         .route("/chama/update", post(update_chama))
+        .route("/chama/invite/:chama_id", get(get_invite))
 
         .route("/chama/add-member", post(create_new_chama))
         .route("/chama/members", post(create_new_chama))
