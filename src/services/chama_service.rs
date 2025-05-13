@@ -240,39 +240,6 @@ pub async fn join_chama(pool:&MySqlPool, user_id:&str, invite_hash:&String) -> i
     }
     return 0;
 }
-pub async fn create_new_position(pool:&MySqlPool, user_id:&str, payload:&ChamaDto) -> i64{
-    let chama_repository = data_repository::DataRepository::<chama::Chama> {
-        pool,
-        table_name: "chama_position",
-        pk_column: "id",
-        phantom: std::marker::PhantomData,
-    };
-    let now_eat = utils::now_eat();
-    let chama_position = chama::Chama {
-        id:None,
-        chama_position:payload.position.clone(),
-        created_at:now_eat,
-        updated_at:now_eat,
-        created_by:user_id.parse::<i64>().unwrap()
-    };
-
-    let result:i64 = match chama_repository.record_exists(&"chama_position", &payload.position).await {
-        Ok(exists) => { if exists { -1 } else { 1 } },
-        Err(_) => 0,
-    };
-    if result == -1 || result == 0{
-        error!("Failed to create new chama: {:?}", result);
-        return result;
-    }
-    let result = chama_repository.insert(&chama_position).await;
-    if result.is_err() {
-        error!("Failed to create new chama position: {:?}", result);
-        return 0;
-    }
-
-    result.unwrap()
-
-}
 
 pub async fn approve_member(pool:&MySqlPool, user_id:&str, payload:&ChamaMemberApproveDto) -> i64{
 

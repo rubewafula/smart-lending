@@ -358,6 +358,7 @@ pub async fn remove_guaranter_setting(
 }
 
 
+
 pub fn routes() -> Router {
     Router::new()
         .route("/chama/create", post(create_new_chama))
@@ -365,7 +366,6 @@ pub fn routes() -> Router {
         .route("/chama/invite/:chama_id", get(get_invite))
         .route("/chama/join/:invite_hash", get(join_chama))
 
-        //.route("/chama/add-position", post(create_new_position))
         .route("/chama/approve-member", post(approve_member)) 
 
         .route("/chama/members/:chama_id", get(members))
