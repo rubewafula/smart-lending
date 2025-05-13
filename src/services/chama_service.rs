@@ -96,72 +96,6 @@ pub async fn update_chama(pool:&MySqlPool, user_id:&str, payload:&ChamaDto) -> i
 
 }
 
-pub async fn add_member(pool:&MySqlPool, user_id:&str, payload:&ChamaMemberDto) -> i64{
-    let chama_member_repository = data_repository::DataRepository::<chama::ChamaMember> {
-        pool,
-        table_name: "chama_member",
-        pk_column: "id",
-        phantom: std::marker::PhantomData,
-    };
-
-    let chama_repository = data_repository::DataRepository::<chama::Chama> {
-        pool,
-        table_name: "chama",
-        pk_column: "id",
-        phantom: std::marker::PhantomData,
-    };
-
-
-    let user_repository = data_repository::DataRepository::<auth::AuthUser> {
-        pool,
-        table_name: "auth_user",
-        pk_column: "id",
-        phantom: std::marker::PhantomData,
-    };
-
-    let result:i64 = match chama_repository.record_exists(&"id", &payload.chama_id.to_string()).await {
-        Ok(exists) => { if exists { 1 } else { -1 } },
-        Err(_) => 0,
-    };
-
-    if result == -1 || result == 0{
-        error!("Failed to create new chama: {:?}", result);
-        return result;
-    }
-
-    let result:i64 = match user_repository.record_exists(&"id", &payload.user_id.to_string()).await {
-        Ok(exists) => { if exists { 1 } else { -1 } },
-        Err(_) => 0,
-    };
-
-    if result == -1 || result == 0{
-        error!("Failed to create new chama: {:?}", result);
-        return result;
-    }
-
-    let now_eat: NaiveDateTime = utils::now_eat();
-    let chama_member =  chama::ChamaMember {
-        id:None,                 
-        user_id:payload.user_id.clone(),           
-        chama_id:payload.chama_id.clone(),
-        position:payload.position.clone(),
-        contribution_amount:payload.contribution_amount.clone(),           
-        created_at: now_eat,
-        updated_at:now_eat,
-        created_by:user_id.parse::<i64>().unwrap(),
-        is_active:1
-    };
-    let result = chama_member_repository.insert(&chama_member).await;
-    if result.is_err() {
-        error!("Failed to create new chama: {:?}", result);
-        return 0;
-    }
-
-    result.unwrap()
-
-
-}
-
 pub async fn get_invite(pool:&MySqlPool, user_id:&str, chama_id:&i64) -> String{
 
     let chama_repository = data_repository::DataRepository::<chama::Chama> {
@@ -209,4 +143,55 @@ pub async fn get_invite(pool:&MySqlPool, user_id:&str, chama_id:&i64) -> String{
 
     let vurl:String = env::var("CHAMA_INVITE_URL").unwrap();
     format!("{}/invite/{}", vurl, hash_string)
+}
+
+
+pub async fn join_chama(pool:&MySqlPool, user_id:&str, invite_hash:&String) -> i64{
+
+    let chama_invite_repository = data_repository::DataRepository::<chama::ChamaInvite> {
+        pool,
+        table_name: "chama_invite",
+        pk_column: "id",
+        phantom: std::marker::PhantomData,
+    };
+
+    let result = match chama_invite_repository.find_by(&"invite_hash", &invite_hash).await {
+        Ok(mut result) => result.pop(), 
+        Err(_) => None,
+    };
+
+    if let Some(chama_invite) = result {
+
+        let chama_member_repository = data_repository::DataRepository::<chama::ChamaMember> {
+            pool,
+            table_name: "chama_member",
+            pk_column: "id",
+            phantom: std::marker::PhantomData,
+        };
+
+        let now_eat: NaiveDateTime = utils::now_eat();
+        let chama_member =  chama::ChamaMember {
+            id:None,                 
+            user_id:user_id.parse::<i64>().unwrap(),         
+            chama_id:chama_invite.chama_id,
+            position:0,
+            contribution_amount:0.0,           
+            created_at: now_eat,
+            updated_at:now_eat,
+            created_by:chama_invite.invited_by,
+            is_active:0
+        };
+        let result = chama_member_repository.insert(&chama_member).await;
+        if result.is_err() {
+            error!("Failed to create new chama: {:?}", result);
+            return 0;
+        }
+        return result.unwrap() as i64;
+    }
+
+    return 0;
+    
+
+
+
 }

@@ -81,18 +81,18 @@ pub async fn update_chama(
 pub async fn join_chama(
     Extension(claims): Extension<Claims>, 
     Extension(pool): Extension<MySqlPool>, 
-    Path(chama_id): Path<String>) -> impl IntoResponse {
+    Path(invite_hash): Path<String>) -> impl IntoResponse {
 
         let user_id = claims.sub;
 
-        let last_insert_id = chama_service::add_member(&pool, &user_id, &payload).await;
+        let last_insert_id = chama_service::join_chama(&pool, &user_id, &invite_hash).await;
          
         if last_insert_id == -1  {
-            return ApiResponse::<&str>::error(&format!("Chama with such name exists"), StatusCode::IM_USED.as_u16())
+            return ApiResponse::<&str>::error(&format!("No such chama "), StatusCode::IM_USED.as_u16())
         } else if last_insert_id  != 0 { 
             return ApiResponse::success(Some("User added to Chama"))
         } else {
-            return ApiResponse::<&str>::error(&format!("Could not created user"), StatusCode::EXPECTATION_FAILED.as_u16())
+            return ApiResponse::<&str>::error(&format!("Could not add user to chama"), StatusCode::EXPECTATION_FAILED.as_u16())
         }
 }
 
@@ -119,9 +119,9 @@ pub fn routes() -> Router {
         .route("/chama/create", post(create_new_chama))
         .route("/chama/update", post(update_chama))
         .route("/chama/invite/:chama_id", get(get_invite))
-        .route("/chama/join/:hash", get(join_chama))
+        .route("/chama/join/:invite_hash", get(join_chama))
 
-        .route("/chama/add-member", post(create_new_chama))
+        //.route("/chama/add-position", post(create_new_position))
         .route("/chama/members", post(create_new_chama))
         .route("/chama/remove-member", post(create_new_chama))
 
