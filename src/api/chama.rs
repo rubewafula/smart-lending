@@ -113,6 +113,22 @@ pub async fn get_invite(
         }
 }
 
+pub async fn create_new_position(
+    Extension(claims): Extension<Claims>, 
+    Extension(pool): Extension<MySqlPool>, 
+    Json(mut payload): Json<ChamaDto>) -> impl IntoResponse {
+    let mut position: String = payload.position.clone();
+    let user_id = claims.sub;
+    let last_insert_id = chama_service::create_new_position(&pool, &user_id, &payload).await;
+    if last_insert_id == -1  {
+        return ApiResponse::<&str>::error(&format!("Position with such name exists"), StatusCode::IM_USED.as_u16())
+    } else if last_insert_id  != 0 { 
+        return ApiResponse::success(Some("Chama position created"))
+    } else {
+        return ApiResponse::<&str>::error(&format!("Could not create position"), StatusCode::EXPECTATION_FAILED.as_u16())
+    }
+}
+
 
 pub fn routes() -> Router {
     Router::new()
@@ -120,19 +136,15 @@ pub fn routes() -> Router {
         .route("/chama/update", post(update_chama))
         .route("/chama/invite/:chama_id", get(get_invite))
         .route("/chama/join/:invite_hash", get(join_chama))
-
-        //.route("/chama/add-position", post(create_new_position))
+        .route("/chama/add-position", post(create_new_position))
         .route("/chama/members", post(create_new_chama))
         .route("/chama/remove-member", post(create_new_chama))
-
         .route("/chama/add-approver", post(create_new_chama))
         .route("/chama/approvers", post(create_new_chama))
         .route("/chama/remove-approver", post(create_new_chama))
-
         .route("/chama/create-position", post(create_new_chama))
         .route("/chama/positions", post(create_new_chama))
         .route("/chama/remove-position", post(create_new_chama))
-
         .route("/chama/add-guaranter-setting", post(create_new_chama))
         .route("/chama/remove-guaranter-setting", post(create_new_chama))
         .route("/chama/guaranter-setting", post(create_new_chama))
