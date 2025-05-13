@@ -15,49 +15,50 @@ pub enum LoanRepaymentFrequecyEnum{
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
 pub struct Chama {
-    id:Option<i64>,             
-    name:String,           
-    contact_number:String,
-    location:String,       
-    size:i32,           
-    contact_person:String,
-    reg_number:String,     
-    created_at:NaiveDateTime,     
-    updated_at :NaiveDateTime    
+    pub id:Option<i64>,             
+    pub name:String,           
+    pub  contact_number:String,
+    pub  location:String,       
+    pub  size:i32,           
+    pub  contact_person:String,
+    pub  reg_number:String,     
+    pub created_at:NaiveDateTime,     
+    pub  updated_at :NaiveDateTime,
+    pub created_by:i64,
 }
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
 pub struct ChamaMember {
-    id:Option<i64>,                 
-    user_id:i64,           
-    chama_id:i64,           
-    position:i64,      
-    contribution_amount:f64,
-    created_at: NaiveDateTime,
-    updated_at:NaiveDateTime      
+    pub id:Option<i64>,                 
+    pub user_id:i64,           
+    pub chama_id:i64,           
+    pub position:i64,      
+    pub contribution_amount:f64,
+    pub created_at: NaiveDateTime,
+    pub updated_at:NaiveDateTime      
 
 }
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
 pub struct ChamaPosition {
-    id:Option<i64>,                 
-    chama_position:String,           
-    role_id:i64,           
-    created_at: NaiveDateTime,
-    updated_at:NaiveDateTime      
+    pub id:Option<i64>,                 
+    pub chama_position:String,           
+    pub role_id:i64,           
+    pub created_at: NaiveDateTime,
+    pub updated_at:NaiveDateTime      
 
 }
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
 pub struct ChamaLoadApprover {
-    id:Option<i64>,                 
-    chama_id:i64,           
-    approver_position_id:i64,           
-    created_at: NaiveDateTime,
-    updated_at:NaiveDateTime      
+    pub id:Option<i64>,                 
+    pub chama_id:i64,           
+    pub approver_position_id:i64,           
+    pub created_at: NaiveDateTime,
+    pub updated_at:NaiveDateTime      
 
 }
 
@@ -65,35 +66,35 @@ pub struct ChamaLoadApprover {
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
 pub struct ChamaLoadLimit {
-    id:Option<i64>,                 
-    chama_id:i64,           
-    amount:f64, 
-    centage_member_savings:f64,          
-    created_at: NaiveDateTime,
-    updated_at:NaiveDateTime      
+    pub id:Option<i64>,                 
+    pub chama_id:i64,           
+    pub amount:f64, 
+    pub centage_member_savings:f64,          
+    pub created_at: NaiveDateTime,
+    pub updated_at:NaiveDateTime      
 
 }
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
 pub struct ChamaLoanRepaymentLimit {
-    id:Option<i64>,                 
-    chama_id:i64,           
-    repayment_frequency:LoanRepaymentFrequecyEnum, 
-    max_repayment_months:i32,          
-    created_at: NaiveDateTime,
-    updated_at:NaiveDateTime      
+    pub id:Option<i64>,                 
+    pub chama_id:i64,           
+    pub repayment_frequency:LoanRepaymentFrequecyEnum, 
+    pub max_repayment_months:i32,          
+    pub created_at: NaiveDateTime,
+    pub updated_at:NaiveDateTime      
 
 }
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
 pub struct ChamaLoadQuaranteeSetting {
-    id:Option<i64>,                 
-    chama_id:i64,           
-    centage_required:f64, 
-    max_repayment_months:i32,          
-    created_at: NaiveDateTime,
-    updated_at:NaiveDateTime      
+    pub id:Option<i64>,                 
+    pub chama_id:i64,           
+    pub centage_required:f64, 
+    pub max_repayment_months:i32,          
+    pub created_at: NaiveDateTime,
+    pub updated_at:NaiveDateTime      
 
 }
