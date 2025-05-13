@@ -12,7 +12,7 @@ use axum::{
     extract::Path,
     middleware
 };
-use crate::dtos::chama::ChamaDto;
+use crate::dtos::chama::{ChamaDto, ChamaMemberDto};
 use crate::utils::{ApiResponse, is_valid_phone, is_valid_email};
 use crate::middleware::auth::require_auth;
 use crate::dtos::auth::Claims;
@@ -81,10 +81,10 @@ pub async fn update_chama(
 pub async fn add_member(
     Extension(claims): Extension<Claims>, 
     Extension(pool): Extension<MySqlPool>, 
-    Json(mut payload): Json<ChamaDto>) -> impl IntoResponse {
+    Json(mut payload): Json<ChamaMemberDto>) -> impl IntoResponse {
 
         let user_id = claims.sub;
-        
+
         let last_insert_id = chama_service::add_member(&pool, &user_id, &payload).await;
          
         if last_insert_id == -1  {
