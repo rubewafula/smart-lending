@@ -78,10 +78,10 @@ pub async fn update_chama(
 }
 
 
-pub async fn add_member(
+pub async fn join_chama(
     Extension(claims): Extension<Claims>, 
     Extension(pool): Extension<MySqlPool>, 
-    Json(payload): Json<ChamaMemberDto>) -> impl IntoResponse {
+    Path(chama_id): Path<String>) -> impl IntoResponse {
 
         let user_id = claims.sub;
 
@@ -119,6 +119,7 @@ pub fn routes() -> Router {
         .route("/chama/create", post(create_new_chama))
         .route("/chama/update", post(update_chama))
         .route("/chama/invite/:chama_id", get(get_invite))
+        .route("/chama/join/:hash", get(join_chama))
 
         .route("/chama/add-member", post(create_new_chama))
         .route("/chama/members", post(create_new_chama))
