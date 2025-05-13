@@ -39,7 +39,12 @@ pub async fn login(
                 None => "0".to_string(),
             };
 
-            let token = match authentication_service::generate_jwt(&id_str) {
+            let roles = match authentication_service::get_user_roles(&pool, &user.id.unwrap()).await {
+                Ok(roles) => roles,
+                Err(e) => return ApiResponse::<auth_dtos::LoginResponse>::error(&format!("Failed to fetch roles: {}", e), 500),
+            };
+
+            let token = match authentication_service::generate_jwt(&id_str, &roles) {
                 Ok(token) => token,
                 Err(e) =>  return ApiResponse::<auth_dtos::LoginResponse>::error(&format!("Failed to generate token: {}", e), 500),
             };

@@ -7,6 +7,7 @@ use chrono::{Utc, Duration, NaiveDateTime};
 use jsonwebtoken::{encode, decode, Header, Validation, EncodingKey, DecodingKey, Algorithm};
 use sqlx::{MySql, MySqlPool, Transaction};
 use tracing::{info, error};
+use sqlx::Row;
 
 use crate::dtos::auth::{Claims, SignupInfo};
 use crate::repositories::data_repository;
@@ -387,7 +388,33 @@ pub fn verify_password(password: &str, hashed_password:&str) -> bool{
 }
 
 
-pub fn generate_jwt(user_id: &str) -> Result<String, jsonwebtoken::errors::Error> {
+pub async fn get_user_roles(pool:&MySqlPool, user_id:&i64) -> Result<Vec<String>, sqlx::Error>{
+
+   
+    let results = sqlx::query(
+        "select name from auth_user_groups aug 
+        inner join auth_group ag on aug.group_id = ag.id where aug.user_id = ?"
+    )
+    .bind(user_id)
+    .fetch_all(pool)
+    .await?;
+
+    if !results.is_empty() {
+        let mut roles = Vec::new();
+        for row in results {
+            roles.push(row.try_get::<String, _>("name")?);
+        }
+        info!("Found results from query");
+        Ok(roles)
+    } else {
+        error!("Could not find user roles");
+        Ok(Vec::new())
+    }
+        
+}
+
+
+pub fn generate_jwt(user_id: &str, roles:&Vec<String>) -> Result<String, jsonwebtoken::errors::Error> {
     let secret = env::var("JWT_SECRET").expect("JWT_SECRET not set");
     let exp = Utc::now()
         .checked_add_signed(Duration::hours(24))
@@ -397,6 +424,7 @@ pub fn generate_jwt(user_id: &str) -> Result<String, jsonwebtoken::errors::Error
     let claims = Claims {
         sub: user_id.to_string(),
         exp: exp as usize,
+        roles: roles.clone(),
     };
 
     encode(&Header::default(), &claims, &EncodingKey::from_secret(secret.as_ref()))

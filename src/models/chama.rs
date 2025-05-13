@@ -4,13 +4,7 @@ use serde::{Deserialize, Serialize};
 use chrono::NaiveDateTime;
 use sqlx::prelude::FromRow;
 
-#[derive(Serialize, Deserialize)]
-#[derive(Debug)]
-pub enum LoanRepaymentFrequecyEnum{
-    WEEKLY,
-    BIWEEKLY,
-    MONTHLY
-  }
+use crate::enums::LoanRepaymentFrequecyEnum;
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
@@ -55,25 +49,28 @@ pub struct ChamaPosition {
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
-pub struct ChamaLoadApprover {
+pub struct ChamaLoanApprover {
     pub id:Option<i64>,                 
-    pub chama_id:i64,           
+    pub chama_id:i64,  
+    pub created_by:i64,         
     pub approver_position_id:i64,           
     pub created_at: NaiveDateTime,
-    pub updated_at:NaiveDateTime      
+    pub updated_at:NaiveDateTime,
+    pub is_active:i8  
 
 }
 
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
-pub struct ChamaLoadLimit {
+pub struct ChamaLoanLimit {
     pub id:Option<i64>,                 
     pub chama_id:i64,           
     pub amount:f64, 
     pub centage_member_savings:f64,          
     pub created_at: NaiveDateTime,
-    pub updated_at:NaiveDateTime      
+    pub updated_at:NaiveDateTime,  
+    pub is_active:i8   
 
 }
 
@@ -82,7 +79,7 @@ pub struct ChamaLoadLimit {
 pub struct ChamaLoanRepaymentLimit {
     pub id:Option<i64>,                 
     pub chama_id:i64,           
-    pub repayment_frequency:LoanRepaymentFrequecyEnum, 
+    pub repayment_frequency:String, 
     pub max_repayment_months:i32,          
     pub created_at: NaiveDateTime,
     pub updated_at:NaiveDateTime      
@@ -91,11 +88,11 @@ pub struct ChamaLoanRepaymentLimit {
 
 #[derive(Serialize, Deserialize)]
 #[derive(Debug, FromRow)]
-pub struct ChamaLoadQuaranteeSetting {
+pub struct ChamaLoanQuaranteeSetting {
     pub id:Option<i64>,                 
     pub chama_id:i64,           
     pub centage_required:f64, 
-    pub max_repayment_months:i32,          
+    pub is_active:i8,        
     pub created_at: NaiveDateTime,
     pub updated_at:NaiveDateTime      
 

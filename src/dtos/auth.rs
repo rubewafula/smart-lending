@@ -17,6 +17,7 @@ pub struct LoginResponse {
 #[derive(Serialize, Clone, Deserialize)]
 pub struct Claims {
     pub sub: String,
+    pub roles: Vec<String>,
     pub exp: usize
 }
 
